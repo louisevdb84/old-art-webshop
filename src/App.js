@@ -5,7 +5,7 @@ import Navigation from "./shared/navbar/navigation.component";
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import SignInAndSignUpPage from './sign-in-and-sign-up/sign-in-and-sign-up.component'
-import { auth } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 class App extends Component {
   constructor() {
@@ -13,14 +13,26 @@ class App extends Component {
 
     this.state = {
       currentUser: null
-    }    
+    }
   }
 
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-      this.setState({ currentUser: user });     
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+      if (userAuth) {
+        const userRef = await createUserProfileDocument(userAuth);
+
+        userRef.onSnapshot(snapShot => {
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data()
+            }
+          })
+        });
+      }
+      this.setState({ currentUser: userAuth });
     })
   }
 
@@ -34,13 +46,13 @@ class App extends Component {
         <Navigation currentUser={this.state.currentUser}></Navigation>
         <Container>
           <BrowserRouter>
-          <Switch>
-            <Route exact path="/" component={HomePage} />
-              <Route path="/webshop" component={HomePage} />            
-              <Route path="/signin" component={SignInAndSignUpPage} />         
-          </Switch>
-        </BrowserRouter>
-        </Container>        
+            <Switch>
+              <Route exact path="/" component={HomePage} />
+              <Route path="/webshop" component={HomePage} />
+              <Route path="/signin" component={SignInAndSignUpPage} />
+            </Switch>
+          </BrowserRouter>
+        </Container>
       </div>
     );
   }
