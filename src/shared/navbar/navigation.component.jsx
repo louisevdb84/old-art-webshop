@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import {
-  Navbar,
-  Nav,
-  NavDropdown,
-  Form,
-  FormControl,
-  Button  
-} from 'react-bootstrap';
+import {Navbar,Nav } from 'react-bootstrap';
 import ScrollIntoView from "react-scroll-into-view";
+import { auth } from '../../firebase/firebase.utils';
+import './navigation.style.scss';
 
 class Navigation extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
@@ -33,7 +32,13 @@ class Navigation extends Component {
               <Nav.Link>Contact</Nav.Link>
             </ScrollIntoView>   
           </Nav>          
-          <Nav.Link style={{color: "rgba(255,255,255,.5)"}} href="/webshop">Webshop</Nav.Link>
+          <Nav.Link className="customLink" href="/webshop">Webshop</Nav.Link>
+          {
+            this.props.currentUser ?
+            <div className="customLink" onClick={() => auth.signOut()}>Sign out</div>
+            :
+              <Nav.Link className="customLink" href="/signin">Sign in</Nav.Link>
+          }
         </Navbar.Collapse>
       </Navbar>
     );
