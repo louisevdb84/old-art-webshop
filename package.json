@@ -6,7 +6,7 @@
   "dependencies": {
     "bootstrap": "^4.5.0",
     "firebase": "^7.16.0",
-    "node-sass": "4.12.0",
+    "node-sass": "4.13.1",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.8.6",
